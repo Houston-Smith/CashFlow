@@ -46,6 +46,28 @@ namespace CashFlow.Repositories
                 }
             }
         }
+
+       public void Add(UserProfile userProfile)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"INSERT INTO UserProfile (FirebaseUSerId, Username, FirstName, LastName, Email, CreateDate)
+                                        OUTPUT INSERTED.ID
+                                        VALUES (@FirebaseUserId, @Username, @FirstName, @LastName, @Email, @CreateDate)";
+                    DbUtils.AddParameter(cmd, "@FirebaseUserId", userProfile.FirebaseUserId);
+                    DbUtils.AddParameter(cmd, "@Username", userProfile.Username);
+                    DbUtils.AddParameter(cmd, "@FirstName", userProfile.FirstName);
+                    DbUtils.AddParameter(cmd, "@LastName", userProfile.LastName);
+                    DbUtils.AddParameter(cmd, "@Email", userProfile.Email);
+                    DbUtils.AddParameter(cmd, "@CreateDate", userProfile.CreateDate);
+
+                    userProfile.Id = (int)cmd.ExecuteScalar();
+                }
+            }
+        }
     }
 }
 
