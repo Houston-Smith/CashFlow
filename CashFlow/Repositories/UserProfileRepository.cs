@@ -103,6 +103,42 @@ namespace CashFlow.Repositories
             }
         }
 
+       public UserProfile GetByUserId(int userId)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    conn.CreateCommand().CommandText = @"
+                        SELECT Id, Username, FirstName, LastName, Email, CreateDate
+                        FROM UserProfile
+                        WHERE Id = @Id";
+                    cmd.Parameters.AddWithValue("@Id", userId);
+                    var reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        UserProfile profile = new UserProfile()
+                        {
+                            Id = DbUtils.GetInt(reader, "UserId"),
+                            Username = DbUtils.GetString(reader, "Username"),
+                            FirstName = DbUtils.GetString(reader, "FirstName"),
+                            LastName = DbUtils.GetString(reader, "LastName"),
+                            Email = DbUtils.GetString(reader, "Email"),
+                            CreateDate = DbUtils.GetDateTime(reader, "CreateDate")
+                        };
+                        reader.Close();
+                        return profile;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+
+                }
+            }
+        }
+
 
     }
 }
