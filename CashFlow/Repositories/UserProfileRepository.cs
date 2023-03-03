@@ -139,7 +139,22 @@ namespace CashFlow.Repositories
             }
         }
 
+       public void UpdateUserProfile (UserProfile userProfile)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                    UPDATE UserProfile
+                    WHERE Id = @id";
+                    cmd.Parameters.AddWithValue("@id", userProfile.Id);
 
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
     }
 }
 
