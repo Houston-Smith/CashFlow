@@ -48,6 +48,8 @@ namespace CashFlow.Repositories
         }
 
        public void Add(UserProfile userProfile)
+
+
         {
             using (var conn = Connection)
             {
@@ -68,6 +70,40 @@ namespace CashFlow.Repositories
                 }
             }
         }
+
+       public List<UserProfile> GetAllUsers()
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                    SELECT Id, Username, FirebaseUserId, FirstName, LastName, Email, CreateDate
+                    FROM UserProfile
+                    ORDER BY FirstName";
+                    var reader = cmd.ExecuteReader();
+                    var users = new List<UserProfile>();
+
+                    while (reader.Read())
+                    {
+                        users.Add(new UserProfile()
+                        {
+                            Id = DbUtils.GetInt(reader, "Id"),
+                            FirebaseUserId = DbUtils.GetString(reader, "FirebaseUserId"),
+                            FirstName = DbUtils.GetString(reader, "FirstName"),
+                            LastName = DbUtils.GetString(reader, "LastName"),
+                            Email = DbUtils.GetString(reader, "Email"),
+                            CreateDate = DbUtils.GetDateTime(reader, "CreateDate")
+                        });                                                       
+                    }
+                    reader.Close();
+                    return users;
+                }
+            }
+        }
+
+
     }
 }
 
