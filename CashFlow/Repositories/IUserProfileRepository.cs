@@ -1,7 +1,7 @@
-﻿using GravyTrain.Models;
+﻿using CashFlow.Models;
 using System.Collections.Generic;
 
-namespace GravyTrain.Repositories
+namespace CashFlow.Repositories
 {
     public interface IUserProfileRepository
     {

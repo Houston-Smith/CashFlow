@@ -1,7 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 
-namespace GravyTrain.Repositories
+namespace CashFlow.Repositories
 {
     public abstract class BaseRepository
     {
