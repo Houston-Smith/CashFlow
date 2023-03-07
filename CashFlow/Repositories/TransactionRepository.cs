@@ -68,6 +68,61 @@ namespace CashFlow.Repositories
                 }
             }
         }
+
+       public Transaction GetTransactioById(int transactionId)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                    SELECT t.Id AS TransactionId, t.Ammount, t.Note, t.Date, t.UserProfileId, t.Categories
+                    tc.Id AS TransactionCategoryId,
+                    c.Id AS CategoryId, c.Name, C.Type
+                    FROM Transaction t
+                    LEFT JOIN TransactionCategory tc ON t.Id = tc.TransactionId
+                    LEFT JOIN Category c ON tc.CategoryId = c.Id
+                    WHERE t.Id = @Id
+                    ";
+                    
+                    cmd.Parameters.AddWithValue("@Id", transactionId);
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        Transaction transaction = null;
+                        if (reader.Read())
+                        {
+                            transaction = new Transaction()
+                            {
+                                Id = DbUtils.GetInt(reader, "TransactionId"),
+                                Ammount = DbUtils.GetInt(reader, "Ammount"),
+                                Note = DbUtils.GetString(reader, "Note"),
+                                Date = DbUtils.GetDateTime(reader, "Date"),
+                                UserProfileId = DbUtils.GetInt(reader, "UserProfileId"),
+                                Categories = new List<Category>()
+                            };
+
+                            do
+                            {
+                                if (DbUtils.IsNotDbNull(reader, "TransactionId"))
+                                {
+                                    transaction.Categories.Add(new Category()
+                                    {
+                                        Id = DbUtils.GetInt(reader, "CategoryId"),
+                                        Name = DbUtils.GetString(reader, "Name"),
+                                        Type = DbUtils.GetString(reader, "Type"),
+                                    });
+                                }
+                            } while (reader.Read());
+
+                            return transaction;
+                        }
+
+                        else { return null; }
+                    }
+                }
+            }
+        }
     }
 }
 

@@ -10,6 +10,6 @@ namespace CashFlow.Models
         public int TransactionId { get; set; }
 
         [Required]
-        public int CateagoryId { get; set;} 
+        public int CateagoryId { get; set;}
     }
 }
