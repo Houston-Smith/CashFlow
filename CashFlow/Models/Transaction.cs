@@ -17,7 +17,7 @@ namespace CashFlow.Models
 
         public int UserProfileId { get; set; }
 
-        public Category Category { get; set; }
+        public List<Category> Categories { get; set; }
 
     }
 }
