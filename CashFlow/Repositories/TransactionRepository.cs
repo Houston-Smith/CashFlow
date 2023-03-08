@@ -69,7 +69,7 @@ namespace CashFlow.Repositories
             }
         }
 
-       public Transaction GetTransactioById(int transactionId)
+       public Transaction GetTransactionById(int transactionId)
         {
             using (var conn = Connection)
             {
@@ -149,7 +149,7 @@ namespace CashFlow.Repositories
                         while (reader.Read())
                         {
                             var transactionId = DbUtils.GetInt(reader, "TransactionId");
-                            var existingTransaction = transactions.FirstOrDefault(p = prop.Id == transactionId);
+                            var existingTransaction = transactions.FirstOrDefault(p => p.Id == transactionId);
                             if (existingTransaction == null)
                             {
                                 existingTransaction = new Transaction()
@@ -176,6 +176,28 @@ namespace CashFlow.Repositories
 
                         return transactions;
                     }
+                }
+            }
+        }
+
+        public void Add(Transaction transaction)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                    INSTERT INTO Transaction (Ammount, Note, Date, UserProfileId)
+                    OUTPUT INSERTED.ID
+                    VALUES (@Ammount, @Note, @Date, @UserProfileId)";
+
+                    DbUtils.AddParameter(cmd, "@Ammount", transaction.Ammount);
+                    DbUtils.AddParameter(cmd, "@Note", transaction.Note);
+                    DbUtils.AddParameter(cmd, "@Date", transaction.Date);
+                    DbUtils.AddParameter(cmd, "@UserProfileId", transaction.UserProfileId);
+
+                    transaction.Id = (int)cmd.ExecuteScalar();
                 }
             }
         }

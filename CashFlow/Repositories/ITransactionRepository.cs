@@ -9,7 +9,7 @@ namespace CashFlow.Repositories
         void Delete(int id);
         List<Transaction> GetAllTransactions();
         Transaction GetTransactionById(int transactionId);
-        List<Transaction> GetAllTransactionsByUserId(int userId);
+        List<Transaction> GetTransactionsByUserId(int userId);
         void Update (Transaction transaction);
     }
 }
