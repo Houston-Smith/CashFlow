@@ -11,7 +11,7 @@ namespace CashFlow.Repositories
     {
        public TransactionRepository(IConfiguration configuration) : base(configuration) { }
 
-       public List<Transaction> GetTransactions()
+       public List<Transaction> GetAllTransactions()
         {
             using (var conn = Connection)
             {
@@ -180,7 +180,7 @@ namespace CashFlow.Repositories
             }
         }
 
-        public void Add(Transaction transaction)
+       public void Add(Transaction transaction)
         {
             using (var conn = Connection)
             {
@@ -198,6 +198,28 @@ namespace CashFlow.Repositories
                     DbUtils.AddParameter(cmd, "@UserProfileId", transaction.UserProfileId);
 
                     transaction.Id = (int)cmd.ExecuteScalar();
+                }
+            }
+        }
+
+       public void Update(Transaction transaction)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                    UPDATE Transaction
+                    SET Ammount = @Ammount, Note = @Note, Date = @Date
+                    WHERE Id = @Id";
+
+                    DbUtils.AddParameter(cmd, "@Id", transaction.Id);
+                    DbUtils.AddParameter(cmd, "@Ammount", transaction.Ammount);
+                    DbUtils.AddParameter(cmd, "@Note", transaction.Note);
+                    DbUtils.AddParameter(cmd, "@Date", transaction.Date);
+
+                    cmd.ExecuteNonQuery();
                 }
             }
         }
